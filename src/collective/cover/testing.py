@@ -21,6 +21,13 @@ import random
 PLONE_VERSION = pkg_resources.require('Plone')[0].version
 
 try:
+    import plone.app.contenttypes
+except ImportError:
+    DEXTERITY_ONLY = False
+else:
+    DEXTERITY_ONLY = True
+
+try:
     pkg_resources.get_distribution('Products.PloneFormGen')
 except pkg_resources.DistributionNotFound:
     HAS_PFG = False
@@ -107,6 +114,10 @@ class Fixture(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
+        if DEXTERITY_ONLY:
+            self.loadZCML(package=plone.app.contenttypes)
+            z2.installProduct(app, 'Products.DateRecurringIndex')
+
         # XXX: do not install (yet) PFG in Plone 5
         if HAS_PFG and PLONE_VERSION < '5.0':
             import Products.PloneFormGen
@@ -125,6 +136,9 @@ class Fixture(PloneSandboxLayer):
             manage_addVirtualHostMonster(app, 'virtual_hosting')
 
     def setUpPloneSite(self, portal):
+        if DEXTERITY_ONLY and PLONE_VERSION < '5.0':
+            self.applyProfile(portal, 'plone.app.contenttypes:default')
+
         # XXX: do not install (yet) PFG in Plone 5
         if HAS_PFG and PLONE_VERSION < '5.0':
             self.applyProfile(portal, 'Products.PloneFormGen:default')

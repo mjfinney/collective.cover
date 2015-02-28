@@ -43,13 +43,15 @@ Test Carousel Tile
     Compose Cover
     Page Should Contain  This carousel is empty; open the content chooser and drag-and-drop some items here.
 
+    # Test if we can edit the cover without any content added to it yet
+    Click Link  css=${edit_link_selector}
+    Page Should Contain  Edit Carousel Tile
+    Click Button  Cancel
+
     # drag&drop an Image
     Open Content Chooser
     Click Element  link=Content tree
     Drag And Drop  xpath=${image_selector}  css=${tile_selector}
-    # The carousel was previously empty, so autoplay=false, so we might not see the carousel updated
-    # Wait Until Page Contains  Test image
-    # Page Should Contain  This image was created for testing purposes
 
     # move to the default view and check tile persisted
     Click Link  link=View
@@ -67,7 +69,9 @@ Test Carousel Tile
     Click Element  link=Content tree
     Drag And Drop  xpath=${image_selector2}  css=${tile_selector}
 
-    # Need to change view before second image is loaded
+    # HACK: object not being added to tile when dropped; just, try again
+    #       Galleria messing around the DOM?
+    Drag And Drop  xpath=${image_selector2}  css=${tile_selector}
 
     # move to the default view and check tile persisted
     Click Link  link=View
@@ -91,22 +95,8 @@ Test Carousel Tile
     ${images} =  Get Total Carousel Images
     Should Be Equal  '${images}'  '2'
 
-    # carousel autoplay is enabled
-    Page Should Contain  options.autoplay = true;
-
-    # edit the tile
-    Compose Cover
-    Click Link  css=${edit_link_selector}
-    Page Should Contain Element  css=.textline-sortable-element
-    # disable carousel autoplay
-    Unselect Checkbox  ${autoplay_id}
-    Click Button  Save
-    Wait Until Page Contains  Test image
-    Page Should Contain  This image was created for testing purposes
-
-    # carousel autoplay is now disabled. Sometimes we need to reload the page.
-    Compose Cover
-    Page Should Contain  options.autoplay = false;
+    # testing against Galleria is a PITA; slow down the process from here
+    Set Selenium Speed  .5
 
     ### Test Custom Title functionality
     Click Link  link=View

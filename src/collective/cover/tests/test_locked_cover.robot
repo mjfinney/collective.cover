@@ -18,7 +18,7 @@ ${tile_selector}  div.tile-container div.tile
 
 Test Locked Cover
     Log in as site owner
-    Goto Homepage
+    Click Link  link=Home
     Create Cover  My Cover  Description
     Edit Cover Layout
 

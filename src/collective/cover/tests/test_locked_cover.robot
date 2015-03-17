@@ -39,7 +39,7 @@ Test Locked Cover
     # open a new browser to simulate a 2-user interaction
     Open Browser  ${ALT_PLONE_URL}
     Enable Autologin as  Site Administrator
-    Goto Homepage
+    Go to  ${ALT_PLONE_URL}
     Click Link  link=My Cover
     Page Should Contain  Locked  ${LOCKED_MESSAGE}
 
